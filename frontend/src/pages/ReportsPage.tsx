@@ -1,14 +1,48 @@
+import { useEffect, useState } from 'react'
+import { getInventorySummary, type InventorySummary } from '../api/home'
+import { getReportsData, type ReportsData } from '../api/reports'
 import { MiniMetric, PageIntro, StatCard } from '../components/ui'
 
 export function ReportsPage() {
   const quarters = ['Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026']
   const values = [120, 132, 148, 156, 168, 184]
+  const [summary, setSummary] = useState<InventorySummary | null>(null)
+  const [reports, setReports] = useState<ReportsData | null>(null)
+
+  useEffect(() => {
+    let active = true
+    Promise.all([getInventorySummary(), getReportsData()]).then(([summaryData, reportsData]) => {
+      if (active) {
+        setSummary(summaryData)
+        setReports(reportsData)
+      }
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  if (!summary || !reports) {
+    return <PageIntro title="Data Reports" description="Loading reports…" />
+  }
+
+  const percent = (part: number, total: number, digits = 0) => `${(part / total * 100).toFixed(digits)}%`
+  const advancedExpert = reports.proficiencies
+    .filter((item) => item.level === 'Advanced' || item.level === 'Expert')
+    .reduce((sum, item) => sum + item.assignments, 0)
+  const advancedExpertShare = percent(advancedExpert, summary.approvedAssignments)
+
   return <>
     <PageIntro title="Data Reports" description="Read-only analytics for organizational leaders. This dashboard summarizes approved assignments, department coverage, and illustrative historical proficiency trends.">
-      <span className="report-role">Role: Organizational Leader</span><span className="report-role">Reporting period: Q3 2026 · Quarter ended 30 Sep</span>
+      <span className="report-role">Role: Organizational Leader</span><span className="report-role">Reporting period: {summary.periodLabel}</span>
     </PageIntro>
     <div className="report-filters">{['All departments', 'All teams', 'All skills', 'All categories', 'All proficiencies', 'Approved only', 'Q3 2026'].map((item, index) => <select key={item} aria-label={`Report filter ${index + 1}`} defaultValue={item}><option>{item}</option>{['Engineering', 'Product', 'Operations', 'Finance'].map((choice) => <option key={choice}>{choice}</option>)}</select>)}</div>
-    <div className="stats-grid report-stats"><StatCard label="Employees with approved assignments" value="128" note="Distinct employees with at least one approved skill" accent="blue" /><StatCard label="Distinct skills" value="42" note="Unique skills present in approved employee assignments" accent="blue" /><StatCard label="Approved assignments" value="184" note="Total approved employee–skill pairs in the current reporting period" accent="blue" /><StatCard label="Advanced / Expert share" value="31%" note="57 of 184 approved assignments are Advanced or Expert" accent="blue" /></div>
+    <div className="stats-grid report-stats">
+      <StatCard label="Employees with approved assignments" value={summary.employeesRepresented.toLocaleString()} note="Distinct employees with at least one approved skill" accent="blue" />
+      <StatCard label="Distinct skills" value={summary.skillsRepresented.toLocaleString()} note="Unique skills present in approved employee assignments" accent="blue" />
+      <StatCard label="Approved assignments" value={summary.approvedAssignments.toLocaleString()} note="Total approved employee–skill pairs in the current reporting period" accent="blue" />
+      <StatCard label="Advanced / Expert share" value={advancedExpertShare} note={`${advancedExpert} of ${summary.approvedAssignments} approved assignments are Advanced or Expert`} accent="blue" />
+    </div>
     <div className="report-panels"><section className="panel report-panel"><h2>Department distribution</h2><p>Unique employees with approved assignments by department. Values reconcile to the 128 employees shown in the summary.</p>{[['Engineering', 42, '33%'], ['Product', 36, '28%'], ['Operations', 28, '22%'], ['Finance', 22, '17%']].map(([name, count, share]) => <div className="distribution-list-row" key={String(name)}><span className="blue-square" /><strong>{name}</strong><span>{count} employees</span><b>{share}</b></div>)}<div className="mini-metrics"><MiniMetric label="Largest department" value="Engineering" note="42 employees" /><MiniMetric label="Smallest department" value="Finance" note="22 employees" /><MiniMetric label="Department coverage" value="4 departments" note="All departments have approved assignments" /></div></section>
       <section className="panel report-panel"><h2>Proficiency distribution</h2><p>Approved assignments by proficiency level. Totals reconcile to 184 approved assignments.</p>{[['Beginner', '36 approved assignments', '19.6%'], ['Intermediate', '91 approved assignments', '49.5%'], ['Advanced', '40 approved assignments', '21.7%'], ['Expert', '17 approved assignments', '9.2%']].map(([name, count, share]) => <div className="distribution-list-row" key={name}><span className="blue-square" /><strong>{name}</strong><span>{count}</span><b>{share}</b></div>)}<div className="mini-metrics"><MiniMetric label="Most common level" value="Intermediate" note="91 approved assignments" /><MiniMetric label="Advanced / Expert share" value="31%" note="57 of 184 approved assignments" /><MiniMetric label="Coverage note" value="128 employees" note="1.44 approved assignments per employee on average" /></div></section></div>
     <section className="panel historical-panel"><h2>Historical skill trend</h2><div className="chart-area">{values.map((value, index) => <div className="chart-column" key={quarters[index]}><b>{value}</b><span className={`bar bar-${index}`} style={{ height: `${Math.round(value / 184 * 78)}%` }} /><small>{quarters[index]}</small></div>)}</div><div className="mini-metrics"><MiniMetric label="Metric" value="Approved assignments" note="Approved employee–skill pairs at each quarter end." /><MiniMetric label="Latest value" value="184" note="Q3 2026 illustrative value." /><MiniMetric label="Historical note" value="Snapshots required" note="LastUpdated does not provide trend history." /><MiniMetric label="Takeaway" value="Illustrative growth" note="Proposed trend shows increasing approved assignments across quarters." /></div></section>

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import type { Page } from '../data'
+import { getInventorySummary, type InventorySummary } from '../api/home'
 import { Icon, Metric, PageIntro } from '../components/ui'
 
 export function HomePage({ navigate }: { navigate: (page: Page) => void }) {
@@ -8,12 +10,28 @@ export function HomePage({ navigate }: { navigate: (page: Page) => void }) {
     { title: 'Organization', desc: 'Understand the people and reporting relationships behind your workforce.', note: 'Departments, teams and employee profiles', icon: 'organization' },
     { title: 'Data Reports', desc: 'Review workforce insight drawn from approved skill assignments.', note: 'Summaries, distributions, coverage and history', icon: 'chart' },
   ]
+
   const roles = [
     ['Workforce Planner', 'Maintain the master catalog and submit skill additions or updates for administrative approval.', 'Skills Catalog'],
     ['Resource Manager', 'Find people, maintain employee–skill associations, and track certifications and their verification.', 'Skills Inventory · Organization'],
     ['Organizational Leader', 'View people and skills, review inventory summaries, and understand workforce coverage and history.', 'Organization · Data Reports'],
     ['Business Operations / Admin', 'Manage data imports and exports, backup and restore, and review additional-skill submissions.', 'Data operations and submission review'],
   ]
+  
+  const [summary, setSummary] = useState<InventorySummary | null>(null)
+
+  useEffect(() => {
+    let active = true
+    getInventorySummary().then((data) => {
+      if (active) setSummary(data)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const display = (value?: number) => (value === undefined ? '—' : value.toLocaleString())
+
   return <>
     <PageIntro title="Home" description="Welcome to Skills Hub. Explore skill definitions, connect skills to people, and understand your workforce." />
     <section className="section-block">
@@ -28,12 +46,12 @@ export function HomePage({ navigate }: { navigate: (page: Page) => void }) {
     </section>
     <div className="connection-strip"><strong>How it connects</strong><span>Catalog defines skills</span><Icon name="arrow" size={14} /><span>Inventory links skills to people in your organization</span><Icon name="arrow" size={14} /><span>Reports turn approved assignments into insight</span></div>
     <section className="panel glance-panel">
-      <div className="panel-heading"><h2>Inventory at a glance</h2><span className="subtle-tag">Illustrative data</span><small>Q3 2026 · quarter ended 30 Sep</small></div>
+      <div className="panel-heading"><h2>Inventory at a glance</h2><span className="subtle-tag">Illustrative data</span><small>{summary?.periodLabel ?? 'Loading…'}</small></div>
       <div className="metric-row">
-        <Metric value="128" label="Employees represented" note="Distinct employees with approved assignments" />
-        <Metric value="42" label="Skills represented" note="Distinct skills in approved assignments" />
-        <Metric value="184" label="Approved assignments" note="Approved employee–skill pairs" />
-        <Metric value="4" label="Departments represented" note="Departments with approved assignments" />
+        <Metric value={display(summary?.employeesRepresented)} label="Employees represented" note="Distinct employees with approved assignments" />
+        <Metric value={display(summary?.skillsRepresented)} label="Skills represented" note="Distinct skills in approved assignments" />
+        <Metric value={display(summary?.approvedAssignments)} label="Approved assignments" note="Approved employee–skill pairs" />
+        <Metric value={display(summary?.departmentsRepresented)} label="Departments represented" note="Departments with approved assignments" />
       </div>
       <p className="footnote">Reporting scope only — these figures are not total organization headcount or the total master skills catalog.</p>
     </section>

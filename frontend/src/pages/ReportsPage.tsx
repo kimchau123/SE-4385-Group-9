@@ -38,6 +38,11 @@ export function ReportsPage() {
   const averagePerEmployee = (summary.approvedAssignments / summary.employeesRepresented).toFixed(2)
   const trendMax = Math.max(...reports.trend.map((item) => item.approvedAssignments))
   const latestTrend = reports.trend[reports.trend.length - 1]
+  const pendingTotal = reports.departments.reduce((sum, row) => sum + row.pendingPairs, 0)
+  const topAdvanced = [...reports.departments].sort((a, b) => b.advancedExpertPairs - a.advancedExpertPairs)[0]
+  const compactTakeaway = largestDepartment.department === topAdvanced.department
+    ? `${largestDepartment.department} has the largest employee base and the highest advanced/expert count.`
+    : `${largestDepartment.department} has the largest employee base; ${topAdvanced.department} has the highest advanced/expert count.`
 
   return <>
     <PageIntro title="Data Reports" description="Read-only analytics for organizational leaders. This dashboard summarizes approved assignments, department coverage, and illustrative historical proficiency trends.">
@@ -82,6 +87,17 @@ export function ReportsPage() {
         <MiniMetric label="Takeaway" value="Illustrative growth" note="Proposed trend shows increasing approved assignments across quarters." />
       </div>
     </section>
-    <section className="panel coverage-panel"><h2>Skill coverage / capacity overview</h2><p>Distinct employees with approved assignments and Advanced/Expert assignment counts by department. Pending assignments are shown separately, outside the Approved-only filter.</p><div className="table-scroll"><table><thead><tr><th>Department</th><th>Employees</th><th>Adv/Expert pairs</th><th>Pending pairs*</th><th>Takeaway</th></tr></thead><tbody>{[['Engineering', '42', '18', '6', 'Highest advanced/expert count and largest employee base.'], ['Product', '36', '14', '4', '14 Advanced/Expert assignments; 4 pending assignments.'], ['Operations', '28', '10', '8', 'Smaller advanced/expert base with more pending reviews.'], ['Finance', '22', '15', '3', 'Highest Advanced/Expert assignment density per employee.']].map((row) => <tr key={row[0]}>{row.map((cell, index) => <td key={cell}>{index === 0 ? <strong>{cell}</strong> : cell}</td>)}</tr>)}</tbody></table></div><div className="mini-metrics"><MiniMetric label="Capacity note" value="Observed coverage only" note="" /><MiniMetric label="Pending context" value="21 pending" note="" /><MiniMetric label="Compact takeaway" value="Engineering has the largest employee base and the highest advanced/expert count." note="" /></div></section>
+    <section className="panel coverage-panel">
+      <h2>Skill coverage / capacity overview</h2>
+      <p>Distinct employees with approved assignments and Advanced/Expert assignment counts by department. Pending assignments are shown separately, outside the Approved-only filter.</p>
+      <div className="table-scroll"><table><thead><tr><th>Department</th><th>Employees</th><th>Adv/Expert pairs</th><th>Pending pairs*</th><th>Takeaway</th></tr></thead><tbody>
+        {reports.departments.map((row) => <tr key={row.department}><td><strong>{row.department}</strong></td><td>{row.employees}</td><td>{row.advancedExpertPairs}</td><td>{row.pendingPairs}</td><td>{row.takeaway}</td></tr>)}
+      </tbody></table></div>
+      <div className="mini-metrics">
+        <MiniMetric label="Capacity note" value="Observed coverage only" note="" />
+        <MiniMetric label="Pending context" value={`${pendingTotal} pending`} note="" />
+        <MiniMetric label="Compact takeaway" value={compactTakeaway} note="" />
+      </div>
+    </section>
   </>
 }

@@ -26,4 +26,15 @@ npm run lint     # Run ESLint
 npm run preview  # Preview the production build after running npm run build
 ```
 
-The current UI uses illustrative sample data and does not require a backend service.
+The frontend currently uses illustrative sample data. A Spring Boot API is available in [`backend/`](backend/README.md).
+
+## Run the backend
+
+Prerequisites: Java 17+, Maven, and PostgreSQL. Create a PostgreSQL database named `skillshub`, then run:
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+By default the API connects to `jdbc:postgresql://localhost:5432/skillshub` with the `postgres` user and password. Override the connection with `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`. Run backend tests with `mvn test` from `backend/`.

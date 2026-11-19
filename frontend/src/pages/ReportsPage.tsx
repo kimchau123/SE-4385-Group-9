@@ -4,8 +4,6 @@ import { getReportsData, type ReportsData } from '../api/reports'
 import { MiniMetric, PageIntro, StatCard } from '../components/ui'
 
 export function ReportsPage() {
-  const quarters = ['Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026']
-  const values = [120, 132, 148, 156, 168, 184]
   const [summary, setSummary] = useState<InventorySummary | null>(null)
   const [reports, setReports] = useState<ReportsData | null>(null)
 
@@ -38,6 +36,8 @@ export function ReportsPage() {
   const proficiencyTotal = reports.proficiencies.reduce((sum, item) => sum + item.assignments, 0)
   const mostCommonLevel = [...reports.proficiencies].sort((a, b) => b.assignments - a.assignments)[0]
   const averagePerEmployee = (summary.approvedAssignments / summary.employeesRepresented).toFixed(2)
+  const trendMax = Math.max(...reports.trend.map((item) => item.approvedAssignments))
+  const latestTrend = reports.trend[reports.trend.length - 1]
 
   return <>
     <PageIntro title="Data Reports" description="Read-only analytics for organizational leaders. This dashboard summarizes approved assignments, department coverage, and illustrative historical proficiency trends.">
@@ -72,7 +72,16 @@ export function ReportsPage() {
         </div>
       </section>
     </div>
-    <section className="panel historical-panel"><h2>Historical skill trend</h2><div className="chart-area">{values.map((value, index) => <div className="chart-column" key={quarters[index]}><b>{value}</b><span className={`bar bar-${index}`} style={{ height: `${Math.round(value / 184 * 78)}%` }} /><small>{quarters[index]}</small></div>)}</div><div className="mini-metrics"><MiniMetric label="Metric" value="Approved assignments" note="Approved employee–skill pairs at each quarter end." /><MiniMetric label="Latest value" value="184" note="Q3 2026 illustrative value." /><MiniMetric label="Historical note" value="Snapshots required" note="LastUpdated does not provide trend history." /><MiniMetric label="Takeaway" value="Illustrative growth" note="Proposed trend shows increasing approved assignments across quarters." /></div></section>
+    <section className="panel historical-panel">
+      <h2>Historical skill trend</h2>
+      <div className="chart-area">{reports.trend.map(({ quarter, approvedAssignments }, index) => <div className="chart-column" key={quarter}><b>{approvedAssignments}</b><span className={`bar bar-${index}`} style={{ height: `${Math.round(approvedAssignments / trendMax * 78)}%` }} /><small>{quarter}</small></div>)}</div>
+      <div className="mini-metrics">
+        <MiniMetric label="Metric" value="Approved assignments" note="Approved employee–skill pairs at each quarter end." />
+        <MiniMetric label="Latest value" value={String(latestTrend.approvedAssignments)} note={`${latestTrend.quarter} illustrative value.`} />
+        <MiniMetric label="Historical note" value="Snapshots required" note="LastUpdated does not provide trend history." />
+        <MiniMetric label="Takeaway" value="Illustrative growth" note="Proposed trend shows increasing approved assignments across quarters." />
+      </div>
+    </section>
     <section className="panel coverage-panel"><h2>Skill coverage / capacity overview</h2><p>Distinct employees with approved assignments and Advanced/Expert assignment counts by department. Pending assignments are shown separately, outside the Approved-only filter.</p><div className="table-scroll"><table><thead><tr><th>Department</th><th>Employees</th><th>Adv/Expert pairs</th><th>Pending pairs*</th><th>Takeaway</th></tr></thead><tbody>{[['Engineering', '42', '18', '6', 'Highest advanced/expert count and largest employee base.'], ['Product', '36', '14', '4', '14 Advanced/Expert assignments; 4 pending assignments.'], ['Operations', '28', '10', '8', 'Smaller advanced/expert base with more pending reviews.'], ['Finance', '22', '15', '3', 'Highest Advanced/Expert assignment density per employee.']].map((row) => <tr key={row[0]}>{row.map((cell, index) => <td key={cell}>{index === 0 ? <strong>{cell}</strong> : cell}</td>)}</tr>)}</tbody></table></div><div className="mini-metrics"><MiniMetric label="Capacity note" value="Observed coverage only" note="" /><MiniMetric label="Pending context" value="21 pending" note="" /><MiniMetric label="Compact takeaway" value="Engineering has the largest employee base and the highest advanced/expert count." note="" /></div></section>
   </>
 }

@@ -13,4 +13,11 @@ mvn spring-boot:run
 mvn test
 ```
 
+## Add test data to skillshub(from \backend)
+(drops and recreates the Skills Hub tables, then loads sample data).
+
+```bash
+psql -U postgres -d skillshub -f skillshub_seed.sql
+```
+
 Project endpoints are rooted at `/api/projects`.

@@ -21,4 +21,28 @@ public class Organization{
     //person who manages this organization; nullable for unmanaged orgs
     private Integer organizationManagerPersonId;
 
+    public int getOrganizationID() {
+        return organizationID;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public Integer getOrganizationManagerPersonId() {
+        return organizationManagerPersonId;
+    }
+
+    public void setOrganizationID(int organizationID) {
+        this.organizationID = organizationID;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public void setOrganizationManagerPersonId(Integer organizationManagerPersonId) {
+        this.organizationManagerPersonId = organizationManagerPersonId;
+    }
+
 }

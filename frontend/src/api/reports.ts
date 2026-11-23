@@ -35,3 +35,18 @@ export async function getReportsData(): Promise<ReportsData> {
     ],
   }
 }
+
+export type ReportFilterOptions = {
+  teams: string[]
+  skills: string[]
+  categories: string[]
+}
+
+// TODO: move to organization/catalog modules once those exist
+export async function getReportFilterOptions(): Promise<ReportFilterOptions> {
+  return {
+    teams: ['Platform', 'Growth', 'Support', 'Revenue Strategy'],
+    skills: ['React', 'Java', 'Python', 'AWS', 'SQL', 'Communication'],
+    categories: ['Software Engineering', 'Data & Analytics', 'Cloud & DevOps', 'Professional Skills'],
+  }
+}

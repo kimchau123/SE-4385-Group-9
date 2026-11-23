@@ -1,5 +1,13 @@
 package com.group9.skillshub.organizations.dto;
 
-public class OrganizationHierarchyDTO {
-    
+import java.util.List;
+
+//one node of the the organization tree returned to org chart view
+public record OrganizationHierarchyDTO(
+    int organizationID,
+    String organizationName,
+    Integer managerPersonID,
+    String managerName,
+    int memberCount, 
+    List<OrganizationHierarchyDTO> children){
 }

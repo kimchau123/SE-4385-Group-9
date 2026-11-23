@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { getInventorySummary, type InventorySummary } from '../api/home'
-import { getReportsData, type ReportsData } from '../api/reports'
+import { getReportFilterOptions, getReportsData, type ReportFilterOptions, type ReportsData } from '../api/reports'
 import { MiniMetric, PageIntro, StatCard } from '../components/ui'
 
 export function ReportsPage() {
   const [summary, setSummary] = useState<InventorySummary | null>(null)
   const [reports, setReports] = useState<ReportsData | null>(null)
+  const [filterOptions, setFilterOptions] = useState<ReportFilterOptions | null>(null)
 
   useEffect(() => {
     let active = true
-    Promise.all([getInventorySummary(), getReportsData()]).then(([summaryData, reportsData]) => {
+    Promise.all([getInventorySummary(), getReportsData(), getReportFilterOptions()]).then(([summaryData, reportsData, filterData]) => {
       if (active) {
         setSummary(summaryData)
         setReports(reportsData)
+        setFilterOptions(filterData)
       }
     })
     return () => {
@@ -20,7 +22,7 @@ export function ReportsPage() {
     }
   }, [])
 
-  if (!summary || !reports) {
+  if (!summary || !reports || !filterOptions) {
     return <PageIntro title="Data Reports" description="Loading reports…" />
   }
 
@@ -44,11 +46,21 @@ export function ReportsPage() {
     ? `${largestDepartment.department} has the largest employee base and the highest advanced/expert count.`
     : `${largestDepartment.department} has the largest employee base; ${topAdvanced.department} has the highest advanced/expert count.`
 
+  const filters = [
+    ['All departments', ...reports.departments.map((item) => item.department)],
+    ['All teams', ...filterOptions.teams],
+    ['All skills', ...filterOptions.skills],
+    ['All categories', ...filterOptions.categories],
+    ['All proficiencies', ...reports.proficiencies.map((item) => item.level)],
+    ['Approved only', 'Include pending'],
+    [...reports.trend].reverse().map((item) => item.quarter),
+  ]
+
   return <>
     <PageIntro title="Data Reports" description="Read-only analytics for organizational leaders. This dashboard summarizes approved assignments, department coverage, and illustrative historical proficiency trends.">
       <span className="report-role">Role: Organizational Leader</span><span className="report-role">Reporting period: {summary.periodLabel}</span>
     </PageIntro>
-    <div className="report-filters">{['All departments', 'All teams', 'All skills', 'All categories', 'All proficiencies', 'Approved only', 'Q3 2026'].map((item, index) => <select key={item} aria-label={`Report filter ${index + 1}`} defaultValue={item}><option>{item}</option>{['Engineering', 'Product', 'Operations', 'Finance'].map((choice) => <option key={choice}>{choice}</option>)}</select>)}</div>
+    <div className="report-filters">{filters.map((options, index) => <select key={options[0]} aria-label={`Report filter ${index + 1}`} defaultValue={options[0]}>{options.map((option) => <option key={option}>{option}</option>)}</select>)}</div>
     <div className="stats-grid report-stats">
       <StatCard label="Employees with approved assignments" value={summary.employeesRepresented.toLocaleString()} note="Distinct employees with at least one approved skill" accent="blue" />
       <StatCard label="Distinct skills" value={summary.skillsRepresented.toLocaleString()} note="Unique skills present in approved employee assignments" accent="blue" />

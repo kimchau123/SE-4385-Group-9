@@ -11,7 +11,7 @@ export type ReportsData = {
 // TODO: pull from backend eventually
 export async function getReportsData(): Promise<ReportsData> {
   return {
-        departments: [
+    departments: [
       { department: 'Engineering', employees: 100, advancedExpertPairs: 18, pendingPairs: 6, takeaway: 'Highest advanced/expert count and largest employee base.' },
       { department: 'Product', employees: 36, advancedExpertPairs: 14, pendingPairs: 4, takeaway: '14 Advanced/Expert assignments; 4 pending assignments.' },
       { department: 'Operations', employees: 28, advancedExpertPairs: 10, pendingPairs: 8, takeaway: 'Smaller advanced/expert base with more pending reviews.' },
@@ -33,5 +33,20 @@ export async function getReportsData(): Promise<ReportsData> {
       { quarter: 'Q2 2026', approvedAssignments: 168 },
       { quarter: 'Q3 2026', approvedAssignments: 184 },
     ],
+  }
+}
+
+export type ReportFilterOptions = {
+  teams: string[]
+  skills: string[]
+  categories: string[]
+}
+
+// TODO: move to organization/catalog modules once those exist
+export async function getReportFilterOptions(): Promise<ReportFilterOptions> {
+  return {
+    teams: ['Platform', 'Growth', 'Support', 'Revenue Strategy'],
+    skills: ['React', 'Java', 'Python', 'AWS', 'SQL', 'Communication'],
+    categories: ['Software Engineering', 'Data & Analytics', 'Cloud & DevOps', 'Professional Skills'],
   }
 }

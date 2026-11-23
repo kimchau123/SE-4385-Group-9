@@ -11,7 +11,7 @@ export type ReportsData = {
 // TODO: pull from backend eventually
 export async function getReportsData(): Promise<ReportsData> {
   return {
-        departments: [
+    departments: [
       { department: 'Engineering', employees: 100, advancedExpertPairs: 18, pendingPairs: 6, takeaway: 'Highest advanced/expert count and largest employee base.' },
       { department: 'Product', employees: 36, advancedExpertPairs: 14, pendingPairs: 4, takeaway: '14 Advanced/Expert assignments; 4 pending assignments.' },
       { department: 'Operations', employees: 28, advancedExpertPairs: 10, pendingPairs: 8, takeaway: 'Smaller advanced/expert base with more pending reviews.' },

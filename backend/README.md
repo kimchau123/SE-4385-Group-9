@@ -13,4 +13,15 @@ mvn spring-boot:run
 mvn test
 ```
 
+## Skills inventory endpoints
+
+- `GET /api/inventory/persons/{personId}` — list a person's skills.
+- `POST /api/inventory/persons/{personId}/skills` — add a skill request (`skillId`, `levelId`).
+- `PUT /api/inventory/proficiency` — update proficiency (`personId`, `skillId`, `levelId`); the level must be 1–5 and the request returns to `REQUESTED`.
+- `PUT /api/inventory/proficiency/status` — approve or cancel a pending skill request (`personId`, `skillId`, `status`).
+- `GET /api/inventory/skills/{skillId}` — list people associated with a skill.
+- `POST /api/inventory/assignments` — request a project assignment (`personId`, `projectId`).
+- `PUT /api/inventory/assignments/status` — approve or cancel a pending assignment (`personId`, `projectId`, `status`).
+- `GET /api/inventory/persons/{personId}/assignments` and `GET /api/inventory/projects/{projectId}/assignments` — list assignments.
+
 Project endpoints are rooted at `/api/projects`.

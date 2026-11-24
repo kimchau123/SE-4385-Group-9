@@ -1,4 +1,4 @@
-package com.group9.skillshub.organization.model;
+package com.group9.skillshub.organizations.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "person")
@@ -16,15 +15,13 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int personId;
 
-    @NotBlank
     @Column(nullable = false)
     private String personName;
 
-    private int managerPersonId;
+    private Integer managerPersonId;
 
-    private int memberOfOrganizationId;
+    private Integer memberOfOrganizationId;
 
-    /** Stored as an int (0/1) per the Detailed Design; exposed as a boolean through isAdmin(). */
     @Column(nullable = false)
     private int isAdmin;
 
@@ -44,27 +41,27 @@ public class Person {
         this.personName = personName;
     }
 
-    public int getManagerPersonId() {
+    public Integer getManagerPersonId() {
         return managerPersonId;
     }
 
-    public void setManagerPersonId(int managerPersonId) {
+    public void setManagerPersonId(Integer managerPersonId) {
         this.managerPersonId = managerPersonId;
     }
 
-    public int getMemberOfOrganizationId() {
+    public Integer getMemberOfOrganizationId() {
         return memberOfOrganizationId;
     }
 
-    public void setMemberOfOrganizationId(int memberOfOrganizationId) {
+    public void setMemberOfOrganizationId(Integer memberOfOrganizationId) {
         this.memberOfOrganizationId = memberOfOrganizationId;
     }
 
     public boolean isAdmin() {
-        return isAdmin == 1;
+        return isAdmin != 0;
     }
 
-    public void setAdmin(boolean admin) {
-        this.isAdmin = admin ? 1 : 0;
+    public void setIsAdmin(int isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

@@ -6,59 +6,65 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity 
-@Table (name = "person")
+@Entity
+@Table(name = "person")
 public class Person {
-    
-    @Id 
-    @GeneratedValue (strategy=GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int personId;
 
-    @Column(nullable=false)
+    @NotBlank
+    @Column(nullable = false)
     private String personName;
-    
-    private Integer managerPersonId;
-    private Integer memberOfOrganizationId;
 
-    @Column (nullable=false)
+    private int managerPersonId;
+
+    private int memberOfOrganizationId;
+
+    /** Stored as an int (0/1) per the Detailed Design; exposed as a boolean through isAdmin(). */
+    @Column(nullable = false)
     private int isAdmin;
 
-    public int getPersonId(){
+    public int getPersonId() {
         return personId;
     }
-    public void setPersonId(int personId){
+
+    public void setPersonId(int personId) {
         this.personId = personId;
     }
 
-    public String getPersonName(){
+    public String getPersonName() {
         return personName;
     }
-    public void setPersonName(String personName){
-        this.personName=personName;
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
-    public Integer getManagerPersonId() {
+    public int getManagerPersonId() {
         return managerPersonId;
     }
 
-    public Integer getMemberOfOrganizationId() {
-        return memberOfOrganizationId;
-    }
-
-    public void setManagerPersonId(Integer managerPersonId) {
+    public void setManagerPersonId(int managerPersonId) {
         this.managerPersonId = managerPersonId;
     }
 
-    public void setMemberOfOrganizationId(Integer memberOfOrganizationId) {
+    public int getMemberOfOrganizationId() {
+        return memberOfOrganizationId;
+    }
+
+    public void setMemberOfOrganizationId(int memberOfOrganizationId) {
         this.memberOfOrganizationId = memberOfOrganizationId;
     }
 
-    public boolean isAdmin(){
-        return isAdmin !=0;
+    public boolean isAdmin() {
+        return isAdmin == 1;
     }
-    public void setIsAdmin(int isAdmin){
-        this.isAdmin = isAdmin;
+
+    public void setAdmin(boolean admin) {
+        this.isAdmin = admin ? 1 : 0;
     }
-    
 }

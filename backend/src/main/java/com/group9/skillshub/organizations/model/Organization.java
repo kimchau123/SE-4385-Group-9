@@ -6,43 +6,43 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity 
+@Entity
 @Table(name = "organization")
-public class Organization{
+public class Organization {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int organizationID;
+    private int organizationId;
 
+    @NotBlank
     @Column(nullable = false)
     private String organizationName;
 
-    //person who manages this organization; nullable for unmanaged orgs
-    private Integer organizationManagerPersonId;
+    private int organizationManagerPersonId;
 
-    public int getOrganizationID() {
-        return organizationID;
+    public int getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(int organizationId) {
+        this.organizationId = organizationId;
     }
 
     public String getOrganizationName() {
         return organizationName;
     }
 
-    public Integer getOrganizationManagerPersonId() {
-        return organizationManagerPersonId;
-    }
-
-    public void setOrganizationID(int organizationID) {
-        this.organizationID = organizationID;
-    }
-
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
 
-    public void setOrganizationManagerPersonId(Integer organizationManagerPersonId) {
-        this.organizationManagerPersonId = organizationManagerPersonId;
+    public int getOrganizationManagerPersonId() {
+        return organizationManagerPersonId;
     }
 
+    public void setOrganizationManagerPersonId(int organizationManagerPersonId) {
+        this.organizationManagerPersonId = organizationManagerPersonId;
+    }
 }

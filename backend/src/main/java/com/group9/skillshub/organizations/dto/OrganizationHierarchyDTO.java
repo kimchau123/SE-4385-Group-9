@@ -6,7 +6,7 @@ import java.util.List;
 public record OrganizationHierarchyDTO(
     int organizationID,
     String organizationName,
-    Integer managerPersonID,
+    Integer managerPersonId,
     String managerName,
     int memberCount, 
     List<OrganizationHierarchyDTO> children){

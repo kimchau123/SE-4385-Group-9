@@ -20,6 +20,12 @@ public class ApiExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
+    @ExceptionHandler(ResourceConflictException.class)
+    public ResponseEntity<ApiError> handleConflict(
+            ResourceConflictException exception, HttpServletRequest request) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class})
     public ResponseEntity<ApiError> handleBadRequest(

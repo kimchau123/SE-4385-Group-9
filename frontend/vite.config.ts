@@ -8,4 +8,8 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    // Forward API calls to the Spring Boot backend (see VITE_USE_MOCK_API in .env.example)
+    proxy: { '/api': 'http://localhost:8080' },
+  },
 })

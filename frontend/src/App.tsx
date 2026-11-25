@@ -1,5 +1,5 @@
-import { useMemo, useState, type FormEvent } from 'react'
-import { employees, initialSkills, navItems, type Page, type Skill } from './data'
+import { useEffect, useState } from 'react'
+import { employees, navItems, type Page } from './data'
 import { Icon } from './components/ui'
 import { AddSkillPage } from './pages/AddSkillPage'
 import { CatalogPage } from './pages/CatalogPage'
@@ -11,20 +11,16 @@ import './App.css'
 
 function App() {
   const [page, setPage] = useState<Page>('Home')
-  const [skills, setSkills] = useState(initialSkills)
-  const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('All categories')
-  const [statusFilter, setStatusFilter] = useState('All')
-  const [selectedSkill, setSelectedSkill] = useState('React')
   const [employeeQuery, setEmployeeQuery] = useState('')
   const [selectedEmployee, setSelectedEmployee] = useState('Jordan Davis')
   const [selectedOrg, setSelectedOrg] = useState('Revenue Strategy')
   const [formMessage, setFormMessage] = useState('')
 
-  const filteredSkills = useMemo(() => skills.filter((skill) => {
-    const matchesText = `${skill.name} ${skill.category}`.toLowerCase().includes(query.toLowerCase())
-    return matchesText && (category === 'All categories' || skill.category === category) && (statusFilter === 'All' || skill.status === statusFilter)
-  }), [skills, query, category, statusFilter])
+  useEffect(() => {
+    if (!formMessage) return
+    const timer = setTimeout(() => setFormMessage(''), 4500)
+    return () => clearTimeout(timer)
+  }, [formMessage])
 
   const filteredEmployees = employees.filter((employee) =>
     `${employee.name} ${employee.email} ${employee.department} ${employee.team}`.toLowerCase().includes(employeeQuery.toLowerCase()),
@@ -32,30 +28,7 @@ function App() {
 
   const navigate = (nextPage: Page) => {
     setPage(nextPage)
-    setQuery('')
     setFormMessage('')
-  }
-
-  const submitSkill = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const name = String(form.get('skillName')).trim()
-    if (skills.some((skill) => skill.name.toLowerCase() === name.toLowerCase())) {
-      setFormMessage('That skill is already in the catalog.')
-      return
-    }
-    const newSkill: Skill = {
-      name,
-      category: String(form.get('category')),
-      type: String(form.get('skillType')),
-      status: 'Pending',
-      resources: 0,
-      description: String(form.get('description')).trim() || 'New skill awaiting review.',
-    }
-    setSkills((current) => [newSkill, ...current])
-    setSelectedSkill(name)
-    setFormMessage('Skill submitted for review.')
-    setPage('Skills Catalog')
   }
 
   return (
@@ -87,8 +60,8 @@ function App() {
 
         <div className="page-content">
           {page === 'Home' && <HomePage navigate={navigate} />}
-          {page === 'Skills Catalog' && <CatalogPage skills={filteredSkills} allSkills={skills} selectedSkill={selectedSkill} setSelectedSkill={setSelectedSkill} query={query} setQuery={setQuery} category={category} setCategory={setCategory} statusFilter={statusFilter} setStatusFilter={setStatusFilter} navigate={navigate} />}
-          {page === 'Add Skill' && <AddSkillPage onSubmit={submitSkill} onCancel={() => navigate('Skills Catalog')} />}
+          {page === 'Skills Catalog' && <CatalogPage navigate={navigate} notify={setFormMessage} />}
+          {page === 'Add Skill' && <AddSkillPage onCreated={(skill) => { setPage('Skills Catalog'); setFormMessage(`${skill.skillName} submitted for review.`) }} onCancel={() => navigate('Skills Catalog')} />}
           {page === 'Skills Inventory' && <InventoryPage employeeQuery={employeeQuery} setEmployeeQuery={setEmployeeQuery} filteredEmployees={filteredEmployees} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} />}
           {page === 'Organization' && <OrganizationPage employeeQuery={employeeQuery} setEmployeeQuery={setEmployeeQuery} filteredEmployees={filteredEmployees} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} navigate={navigate} />}
           {page === 'Data Reports' && <ReportsPage />}

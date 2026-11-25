@@ -1961,3 +1961,221 @@ tbody tr.row-selected {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Skills Catalog (Workforce Planner): forms, dialogs, statuses ---- */
+.status-badge.requested {
+  color: #ad7546;
+  background: #fbf1e4;
+}
+
+.status-badge.canceled {
+  color: #777a83;
+  background: #eff0f2;
+}
+
+.button:disabled,
+.text-button:disabled,
+.pagination button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.button-danger {
+  color: #a8402f;
+  border-color: #ecc9c2;
+}
+
+.button-danger:hover {
+  background: #fdf1ef;
+  border-color: #d89a8f;
+}
+
+.detail-actions {
+  flex-wrap: wrap;
+}
+
+.catalog-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  color: #a8402f;
+  font-size: 10px;
+  background: #fdf1ef;
+  border-color: #ecc9c2;
+}
+
+.table-heading h2 .subtle-tag {
+  margin-left: 6px;
+}
+
+.skill-form .field {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.skill-form label {
+  color: #353740;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.skill-form input,
+.skill-form select,
+.skill-form textarea {
+  width: 100%;
+  min-height: 33px;
+  padding: 8px 10px;
+  color: #373a43;
+  font-size: 10px;
+  font-weight: 400;
+  background: #fff;
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+  outline: 0;
+}
+
+.skill-form textarea {
+  resize: vertical;
+}
+
+.skill-form input:focus,
+.skill-form select:focus,
+.skill-form textarea:focus {
+  border-color: #839bd7;
+  box-shadow: 0 0 0 2px #416bd51b;
+}
+
+.skill-form [aria-invalid="true"] {
+  border-color: #d97b6b;
+}
+
+.field-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 12px;
+  font-size: 8px;
+}
+
+.field-error,
+.form-error {
+  color: #b3412f;
+  font-size: 9px;
+}
+
+.form-error {
+  margin: 0 0 10px;
+}
+
+.field-hint,
+.field-count {
+  color: #8c8f98;
+}
+
+.field-count.over {
+  color: #b3412f;
+  font-weight: 600;
+}
+
+.dialog {
+  width: min(92vw, 470px);
+  max-height: 90vh;
+  padding: 0;
+  color: #33353e;
+  background: #fff;
+  border: 1px solid #d7d9de;
+  border-radius: 9px;
+  box-shadow: 0 12px 40px #10172b33;
+}
+
+.dialog::backdrop {
+  background: #10172b73;
+}
+
+.dialog-body {
+  padding: 20px 24px 22px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.dialog-close {
+  width: 26px;
+  height: 26px;
+  color: #6d7280;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dialog-close:hover {
+  background: #f0f1f3;
+}
+
+.dialog-note {
+  margin: 0 0 12px;
+  color: #777b85;
+  font-size: 9px;
+}
+
+.level-list {
+  padding: 0;
+  margin: 0 0 12px;
+  list-style: none;
+}
+
+.level-list li {
+  margin-bottom: 7px;
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.level-number {
+  display: grid;
+  flex: 0 0 22px;
+  height: 22px;
+  place-items: center;
+  color: #3158ad;
+  font-size: 9px;
+  font-weight: 600;
+  background: #e9effc;
+  border-radius: 50%;
+}
+
+.level-row input {
+  flex: 1;
+  min-height: 29px;
+  padding: 6px 9px;
+  font-size: 10px;
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+}
+
+.level-add {
+  padding-top: 10px;
+  margin-bottom: 16px;
+  border-top: 1px solid #ededef;
+}
+
+.row-selected,
+tr[tabindex]:focus-visible {
+  background: #f1f5fd;
+}

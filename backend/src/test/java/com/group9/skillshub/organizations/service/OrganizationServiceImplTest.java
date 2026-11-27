@@ -176,7 +176,7 @@ class OrganizationServiceImplTest {
     @Test
     void getOrganizationMembersReturnsMembersSortedByNameIgnoringCase() {
         when(organizationRepository.existsById(7)).thenReturn(true);
-        when(personRepository.findByMemberofOrganizationId(7)).thenReturn(List.of(
+        when(personRepository.findByMemberOfOrganizationId(7)).thenReturn(List.of(
                 person(1, "Zed", 7), person(2, "ann", 7), person(3, "Bob", 7)));
 
         List<Person> members = service.getOrganizationMembers(7);
@@ -189,7 +189,7 @@ class OrganizationServiceImplTest {
         when(organizationRepository.existsById(404)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getOrganizationMembers(404));
-        verify(personRepository, never()).findByMemberofOrganizationId(404);
+        verify(personRepository, never()).findByMemberOfOrganizationId(404);
     }
 
     @Test

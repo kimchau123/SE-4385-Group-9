@@ -73,7 +73,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if(!organizationRepository.existsById(orgId)){
             throw new ResourceNotFoundException("Organization "+ orgId + " was not found");
         }
-        return sortByName(personRepository.findByMemberofOrganizationId(orgId));
+        return sortByName(personRepository.findByMemberOfOrganizationId(orgId));
     }
 
     @Override 

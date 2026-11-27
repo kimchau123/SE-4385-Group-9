@@ -1068,8 +1068,11 @@ INSERT INTO project_skill_required (project_id, skill_id, skill_proficiency_leve
 
 -- person_skill and person_project_assignment: the spreadsheet has no sample rows for these, so they are created empty.
 
--- Keep the projects identity sequence in line with the explicit ids above.
-SELECT setval(pg_get_serial_sequence('projects', 'project_id'),
-              (SELECT MAX(project_id) FROM projects));
+-- Keep identity sequences in line with the explicit ids above,
+-- so records created through the API get the next free id.
+SELECT setval(pg_get_serial_sequence('organization', 'organization_id'), (SELECT MAX(organization_id) FROM organization));
+SELECT setval(pg_get_serial_sequence('person', 'person_id'), (SELECT MAX(person_id) FROM person));
+SELECT setval(pg_get_serial_sequence('skill', 'skill_id'), (SELECT MAX(skill_id) FROM skill));
+SELECT setval(pg_get_serial_sequence('projects', 'project_id'), (SELECT MAX(project_id) FROM projects));
 
 COMMIT;

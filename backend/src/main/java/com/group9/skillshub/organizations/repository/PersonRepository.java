@@ -10,7 +10,7 @@ import com.group9.skillshub.organizations.model.Person;
 public interface PersonRepository extends JpaRepository<Person, Integer> {
     List<Person> findByPersonNameContainingIgnoreCase(String name);
 
-    List<Person> findByMemberofOrganizationId(int orgId);
+    List<Person> findByMemberOfOrganizationId(int orgId);
 
     List<Person> findByMemberOfOrganizationIdIn(Collection<Integer> orgIds);
 

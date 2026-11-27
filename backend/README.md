@@ -26,6 +26,20 @@ mvn test
 
 Project endpoints are rooted at `/api/projects`.
 
+## Load sample data
+
+The seed file loads the sponsor's sample data (organizations, people, skills, projects). It doesn't create tables, Hibernate creates them from the entities.
+
+1. Start the backend once (`mvn spring-boot:run`) so the tables and the five proficiency levels are created, then stop it.
+2. From `backend/`:
+
+```bash
+psql -U postgres -d skillshub -v ON_ERROR_STOP=1 -f skillshub_seed.sql
+```
+
+Safe to re-run: it clears existing data first (proficiency levels are kept).
+
+
 ## Data operations services
 
 The DataOps service accepts UTF-8 CSV bytes with exactly these headers:

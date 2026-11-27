@@ -5,7 +5,7 @@ import com.group9.skillshub.common.ResourceNotFoundException;
 import com.group9.skillshub.inventory.model.PersonSkill;
 import com.group9.skillshub.inventory.model.PersonSkillId;
 import com.group9.skillshub.inventory.repository.PersonSkillRepository;
-import com.group9.skillshub.organization.repository.PersonRepository;
+import com.group9.skillshub.organizations.repository.PersonRepository;
 import com.group9.skillshub.projects.model.ApprovalStatus;
 import com.group9.skillshub.projects.model.PersonProjectAssignment;
 import com.group9.skillshub.projects.model.PersonProjectAssignmentId;

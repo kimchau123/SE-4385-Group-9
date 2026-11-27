@@ -39,3 +39,21 @@ psql -U postgres -d skillshub -v ON_ERROR_STOP=1 -f skillshub_seed.sql
 
 Safe to re-run: it clears existing data first (proficiency levels are kept).
 
+
+## Data operations services
+
+The DataOps service accepts UTF-8 CSV bytes with exactly these headers:
+`skillName,skillDescription,skillType`. Descriptions may be empty; skill types are
+`KNOWLEDGE`, `EXPERIENCE`, `TECHNOLOGY`, or `OTHER`. Imported catalog skills start
+in `REQUESTED` status. Inventory reports are generated as UTF-8 CSV.
+
+Database backup and restore use the PostgreSQL `pg_dump` and `pg_restore` executables.
+Configure their paths with `PG_DUMP_EXECUTABLE` and `PG_RESTORE_EXECUTABLE`; configure
+the private archive directory with `DATAOPS_BACKUP_DIRECTORY` (default `./backups`).
+Backups are tracked in the database and verified using SHA-256 before restore.
+
+The data-operations service is implemented, but its HTTP controller is intentionally
+not enabled yet: this application has no authentication provider, while CSV import,
+report export, and especially database restore must be restricted to administrators.
+Do not expose these operations until the team authentication layer enforces admin
+authorization.

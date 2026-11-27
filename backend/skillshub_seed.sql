@@ -1027,14 +1027,6 @@ INSERT INTO skill (skill_id, skill_name, status, skill_type) VALUES
     (11, 'Data Storage', 'APPROVED', 'TECHNOLOGY'),
     (12, 'Product Feature Design', 'APPROVED', 'EXPERIENCE');
 
--- Skill proficiency levels
--- spreadsheet defines this table but gives no values,so these four levels are PLACEHOLDERS. Rename/replace them if we need
-INSERT INTO skill_proficiency_level (skill_proficiency_level_id, skill_proficiency_level_name) VALUES
-    (1, 'Beginner'),
-    (2, 'Intermediate'),
-    (3, 'Advanced'),
-    (4, 'Expert');
-
 -- Projects (4)
 INSERT INTO projects (project_id, project_name, status, project_owning_organization_id, project_start_date, project_end_date) OVERRIDING SYSTEM VALUE VALUES
     (1, 'Order Management', 'APPROVED', 1, '2025-01-01', '2025-12-31'),

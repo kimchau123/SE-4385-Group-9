@@ -6,6 +6,7 @@ import com.group9.skillshub.dataops.dto.ImportValidationResult;
 import com.group9.skillshub.dataops.service.DataOpsService;
 import com.group9.skillshub.common.ApiExceptionHandler;
 import com.group9.skillshub.common.ResourceNotFoundException;
+import com.group9.skillshub.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
@@ -30,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DataOpsController.class)
-@Import(ApiExceptionHandler.class)
+@Import({ApiExceptionHandler.class, SecurityConfig.class})
+@WithMockUser(username = "1", roles = "ADMIN")
 class DataOpsControllerTest {
 
     @Autowired

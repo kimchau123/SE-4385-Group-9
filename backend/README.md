@@ -26,6 +26,26 @@ mvn test
 
 Project endpoints are rooted at `/api/projects`.
 
+## Authentication
+
+Every `/api/**` request needs HTTP Basic credentials: the **person id** as the username and the shared demo password (`demo123` by default, set with `AUTH_DEMO_PASSWORD`). `GET /api/auth/me` returns the logged-in user (`personId`, `personName`, `role`, `isAdmin`).
+
+Roles are informational. Anyone logged in can read everything. Admin-only actions (`isAdmin = 1`) return 403 for other users: creating or changing projects and project skills, approving or canceling person skills and project assignments, approving or denying catalog skills, and `/api/dataops/**`.
+
+Demo accounts (after loading the seed):
+
+| Person id | Name | Role |
+|---|---|---|
+| 987 | Nicole McLean | Business Operations (admin) |
+| 988 | Crosby Reeves | Workforce Planner |
+| 110 | Mylo Hobbs | Organizational Leader |
+| 8 | Brantley Whitney | Resource Manager |
+| 1 | Kamryn Villa | Employee |
+
+```bash
+curl -u 987:demo123 http://localhost:8080/api/auth/me
+```
+
 ## Load sample data
 
 The seed file loads the sponsor's sample data (organizations, people, skills, projects). It doesn't create tables, Hibernate creates them from the entities.

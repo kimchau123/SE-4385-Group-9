@@ -1012,6 +1012,16 @@ INSERT INTO person (person_id, person_name, manager_person_id, member_of_organiz
     (987, 'Nicole McLean', 988, 6, 1),
     (988, 'Crosby Reeves', NULL, 7, 0);
 
+-- Roles: not in the sponsor data, assigned by rule. Each later rule overrides the earlier ones.
+UPDATE person SET role = 'EMPLOYEE';
+UPDATE person SET role = 'RESOURCE_MANAGER'
+    WHERE person_id IN (SELECT manager_person_id FROM person WHERE manager_person_id IS NOT NULL);
+UPDATE person SET role = 'ORGANIZATIONAL_LEADER'
+    WHERE person_id IN (SELECT organization_manager_person_id FROM organization);
+UPDATE person SET role = 'WORKFORCE_PLANNER'
+    WHERE member_of_organization_id = (SELECT organization_id FROM organization WHERE organization_name = 'Workforce Planning');
+UPDATE person SET role = 'BUSINESS_OPERATIONS' WHERE is_admin = 1;
+
 -- Skills catalog (12)
 INSERT INTO skill (skill_id, skill_name, status, skill_type) VALUES
     (1, 'Java', 'APPROVED', 'TECHNOLOGY'),

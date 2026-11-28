@@ -1782,6 +1782,21 @@ tbody tr.row-selected {
   border-radius: 50%;
 }
 
+.logout-button {
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: white;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: #f1f5f9;
+}
+
 @media (max-width: 480px) {
   .employee-skill {
     grid-template-columns: minmax(0, 1fr);

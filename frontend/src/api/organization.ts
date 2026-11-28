@@ -1,3 +1,5 @@
+import {apiFetch} from './client'
+
 export type OrganizationHierarchy = {
     organizationID: number
     organizationName: string
@@ -35,7 +37,7 @@ const BASE_URL = '/api/organizations'
 
 export async function getOrganizationHierarchy():
     Promise<OrganizationHierarchy[]> {
-        const response = await fetch(`${BASE_URL}/hierarchy`)
+        const response = await apiFetch(`${BASE_URL}/hierarchy`)
         if (!response.ok) {
             throw new Error('Failed to load organization hierarchy')
         }
@@ -43,7 +45,7 @@ export async function getOrganizationHierarchy():
     }
 
 export async function getOrganizationMembers(orgID: number,includeSubOrganizations: boolean = false): Promise<Person[]> {
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/${orgID}/members?includeSubOrganizations=${includeSubOrganizations}`
     )
     if (!response.ok) {
@@ -53,7 +55,7 @@ export async function getOrganizationMembers(orgID: number,includeSubOrganizatio
 }
 
 export async function getPersonSkillDetails(personId: number): Promise<OrganizationPersonSkill[]> {
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/persons/${personId}/skills`
     )
     if (!response.ok) {
@@ -74,7 +76,7 @@ export async function getSkillDistribution(
     if (proficiencyLevelId !== null) { 
         params.set('proficiencyLevelId', String(proficiencyLevelId)) 
     } 
-    const response = await fetch(`${BASE_URL}/${orgId}/skills-distribution?${params.toString()}`)
+    const response = await apiFetch(`${BASE_URL}/${orgId}/skills-distribution?${params.toString()}`)
     if (!response.ok) { 
         throw new Error('Failed to load skills distribution') 
     } 
@@ -82,7 +84,7 @@ export async function getSkillDistribution(
 }
 
 export async function getSkillSummary(orgId: number, includeSubOrganizations: boolean = false): Promise<OrganizationSkillDistribution[]> {
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/${orgId}/skills-summary?includeSubOrganizations=${includeSubOrganizations}`
     )
     if (!response.ok) {
@@ -111,7 +113,7 @@ export async function filterOrganizationMembers(
             String(proficiencyLevelId)
         )
     }
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/${orgId}/members/filter?${params.toString()}`
     )
     if (!response.ok) {
@@ -126,7 +128,7 @@ export type OrganizationProficiencyLevel = {
 }
 
 export async function getProficiencyLevels(): Promise<OrganizationProficiencyLevel[]> {
-  const response = await fetch(`${BASE_URL}/proficiency-levels`)
+  const response = await apiFetch(`${BASE_URL}/proficiency-levels`)
   if (!response.ok) {
     throw new Error('Failed to load proficiency levels')
   }
@@ -134,7 +136,7 @@ export async function getProficiencyLevels(): Promise<OrganizationProficiencyLev
 }
 
 export async function getPersonById(personId: number): Promise<Person> {
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/persons/${personId}`
   );
   if (!response.ok) {
@@ -153,7 +155,7 @@ export type OrganizationSkillCapacity = {
 } 
 
 export async function getSkillCapacity(orgId: number): Promise<OrganizationSkillCapacity> { 
-    const response = await fetch( `${BASE_URL}/${orgId}/skills-capacity` ) 
+    const response = await apiFetch( `${BASE_URL}/${orgId}/skills-capacity` ) 
     if (!response.ok) { 
         throw new Error('Failed to load skill capacity') 
     } 
@@ -161,7 +163,7 @@ export async function getSkillCapacity(orgId: number): Promise<OrganizationSkill
 }
 
 export async function getOverallSkillCapacity(): Promise<OrganizationSkillCapacity> { 
-    const response = await fetch(`${BASE_URL}/skills-capacity`) 
+    const response = await apiFetch(`${BASE_URL}/skills-capacity`) 
     if (!response.ok) { 
         throw new Error('Failed to load overall skill capacity') 
     } 

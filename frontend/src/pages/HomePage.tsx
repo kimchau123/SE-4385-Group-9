@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import type { Page } from '../data'
 import { getInventorySummary, type InventorySummary } from '../api/home'
 import { Icon, Metric, PageIntro } from '../components/ui'
+import { useAuth } from '../auth/useAuth'
 
 export function HomePage({ navigate }: { navigate: (page: Page) => void }) {
+  const { isAdmin } = useAuth()
   const cards: { title: Page; desc: string; note: string; icon: string }[] = [
     { title: 'Skills Catalog', desc: 'Explore the master definitions that give skills a shared meaning.', note: 'Skill definitions, categories and types', icon: 'catalog' },
     { title: 'Skills Inventory', desc: 'See how catalog skills are assigned to employees across the workforce.', note: 'Proficiency, approval status and certifications', icon: 'layers' },
@@ -56,7 +58,7 @@ export function HomePage({ navigate }: { navigate: (page: Page) => void }) {
       <p className="footnote">Reporting scope only — these figures are not total organization headcount or the total master skills catalog.</p>
     </section>
     <section className="panel role-panel"><div className="panel-heading"><h2>Find your workspace</h2><p>A guide to how each role uses Skills Hub. Your assigned permissions determine what you can view or maintain.</p></div>
-      <div className="role-grid">{roles.map(([role, desc, links], index) => <div key={role} className="role-card"><strong>{role}</strong><small>Role guide</small>{index === 2 && <span className="current-role">Your current role</span>}<p>{desc}</p><span>{links}</span></div>)}</div>
+      <div className="role-grid">{roles.map(([role, desc, links], index) => <div key={role} className="role-card"><strong>{role}</strong><small>Role guide</small>{index === 3 && isAdmin && ( <span className="current-role">Admin access</span> )}<p>{desc}</p><span>{links}</span></div>)}</div>
     </section>
   </>
 }

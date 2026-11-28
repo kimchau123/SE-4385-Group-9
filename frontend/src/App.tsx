@@ -90,7 +90,7 @@ function App() {
           {page === 'Skills Catalog' && <CatalogPage skills={filteredSkills} allSkills={skills} selectedSkill={selectedSkill} setSelectedSkill={setSelectedSkill} query={query} setQuery={setQuery} category={category} setCategory={setCategory} statusFilter={statusFilter} setStatusFilter={setStatusFilter} navigate={navigate} />}
           {page === 'Add Skill' && <AddSkillPage onSubmit={submitSkill} onCancel={() => navigate('Skills Catalog')} />}
           {page === 'Skills Inventory' && <InventoryPage employeeQuery={employeeQuery} setEmployeeQuery={setEmployeeQuery} filteredEmployees={filteredEmployees} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} />}
-          {page === 'Organization' && <OrganizationPage employeeQuery={employeeQuery} setEmployeeQuery={setEmployeeQuery} filteredEmployees={filteredEmployees} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} navigate={navigate} />}
+          {page === 'Organization' && <OrganizationPage employeeQuery={employeeQuery} setEmployeeQuery={setEmployeeQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} navigate={navigate} />}
           {page === 'Data Reports' && <ReportsPage />}
         </div>
       </main>

@@ -23,7 +23,7 @@ public class Person {
     private Integer memberOfOrganizationId;
 
     @Column(nullable = false)
-    private int isAdmin;
+    private boolean isAdmin;
 
     public int getPersonId() {
         return personId;
@@ -58,10 +58,10 @@ public class Person {
     }
 
     public boolean isAdmin() {
-        return isAdmin != 0;
+        return isAdmin;
     }
 
-    public void setIsAdmin(int isAdmin) {
+    public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 }

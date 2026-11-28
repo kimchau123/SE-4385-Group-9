@@ -2,8 +2,8 @@ package com.group9.skillshub.inventory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.group9.skillshub.organization.model.Person;
-import com.group9.skillshub.organization.repository.PersonRepository;
+import com.group9.skillshub.organizations.model.Person;
+import com.group9.skillshub.organizations.repository.PersonRepository;
 import com.group9.skillshub.projects.model.ApprovalStatus;
 import com.group9.skillshub.projects.model.Project;
 import com.group9.skillshub.projects.model.RecordStatus;

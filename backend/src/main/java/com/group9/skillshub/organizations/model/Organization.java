@@ -19,6 +19,7 @@ public class Organization {
     private String organizationName;
 
     /** Person who manages this organization; nullable so unmanaged orgs can exist. */
+    @Column(name = "manager_person_id")
     private Integer organizationManagerPersonId;
 
     public int getOrganizationId() {

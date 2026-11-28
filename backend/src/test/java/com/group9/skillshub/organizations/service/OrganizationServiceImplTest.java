@@ -25,6 +25,9 @@ import com.group9.skillshub.organizations.model.Organization;
 import com.group9.skillshub.organizations.model.Person;
 import com.group9.skillshub.organizations.repository.OrganizationRepository;
 import com.group9.skillshub.organizations.repository.PersonRepository;
+import com.group9.skillshub.inventory.repository.PersonSkillRepository;
+import com.group9.skillshub.skills.repository.SkillRepository;
+import com.group9.skillshub.skills.repository.SkillProficiencyLevelRepository;
 
 @ExtendWith(MockitoExtension.class)
 class OrganizationServiceImplTest {
@@ -35,6 +38,15 @@ class OrganizationServiceImplTest {
     @Mock
     private PersonRepository personRepository;
 
+    @Mock 
+    private PersonSkillRepository personSkillRepository;
+
+    @Mock 
+    private SkillRepository skillRepository;
+    
+    @Mock 
+    private SkillProficiencyLevelRepository skillProficiencyLevelRepository;
+
     @Captor
     private ArgumentCaptor<Collection<Integer>> orgIdsCaptor;
 
@@ -42,7 +54,7 @@ class OrganizationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new OrganizationServiceImpl(organizationRepository, personRepository);
+        service = new OrganizationServiceImpl(organizationRepository, personRepository, personSkillRepository, skillRepository, skillProficiencyLevelRepository);
     }
 
     @Test
@@ -140,11 +152,14 @@ class OrganizationServiceImplTest {
 
     @Test
     void getOrganizationHierarchyDoesNotDropOrganizationsInAManagementCycle() {
-        // Alpha is managed by someone in Beta, and Beta by someone in Alpha.
+        // Alpha and Beta managers report to each other.
         when(organizationRepository.findAll()).thenReturn(List.of(
-                org(1, "Alpha", 10), org(2, "Beta", 20)));
+                org(1, "Alpha", 10),
+                org(2, "Beta", 20)));
+
         when(personRepository.findAll()).thenReturn(List.of(
-                person(10, "In Beta", 2), person(20, "In Alpha", 1)));
+                person(10, "Alpha Manager", 1, 20),
+                person(20, "Beta Manager", 2, 10)));
 
         List<OrganizationHierarchyDTO> roots = service.getOrganizationHierarchy();
 
@@ -176,7 +191,7 @@ class OrganizationServiceImplTest {
     @Test
     void getOrganizationMembersReturnsMembersSortedByNameIgnoringCase() {
         when(organizationRepository.existsById(7)).thenReturn(true);
-        when(personRepository.findByMemberofOrganizationId(7)).thenReturn(List.of(
+        when(personRepository.findByMemberOfOrganizationId(7)).thenReturn(List.of(
                 person(1, "Zed", 7), person(2, "ann", 7), person(3, "Bob", 7)));
 
         List<Person> members = service.getOrganizationMembers(7);
@@ -189,7 +204,7 @@ class OrganizationServiceImplTest {
         when(organizationRepository.existsById(404)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getOrganizationMembers(404));
-        verify(personRepository, never()).findByMemberofOrganizationId(404);
+        verify(personRepository, never()).findByMemberOfOrganizationId(404);
     }
 
     @Test
@@ -224,9 +239,10 @@ class OrganizationServiceImplTest {
     }
 
     /**
-     * Exec(1) <- Engineering(2) <- Data(3), and Exec(1) <- Sales(4).
-     * An organization's parent is the organization its manager belongs to, so Exec's
-     * manager (in Exec itself) makes it the root, and Engineering's manager sits in Exec.
+     * Exec(1) <- Engineering(2) <- Data(3),
+     * and Exec(1) <- Sales(4).
+     * Parent organizations are determined by the
+     * department manager's supervisor.
      */
     private void stubCompanyStructure() {
         when(organizationRepository.findAll()).thenReturn(List.of(
@@ -234,12 +250,14 @@ class OrganizationServiceImplTest {
                 org(2, "Engineering", 101),
                 org(3, "Data", 102),
                 org(4, "Sales", 103)));
+
         when(personRepository.findAll()).thenReturn(List.of(
-                person(100, "Eve Exec", 1),
-                person(101, "Ellen Eng", 1),
-                person(102, "Dan Data", 2),
-                person(103, "Sam Sales", 1),
-                person(105, "Fay Dev", 3)));
+                person(100, "Eve Exec", 1, null),
+                person(101, "Ellen Eng", 1, 100),
+                person(102, "Dan Data", 2, 106),
+                person(103, "Sam Sales", 1, 100),
+                person(105, "Fay Dev", 3, 102),
+                person(106, "Engineering Supervisor", 2, 100)));
     }
 
     private List<String> names(List<Person> people) {
@@ -260,5 +278,10 @@ class OrganizationServiceImplTest {
         person.setPersonName(name);
         person.setMemberOfOrganizationId(organizationId);
         return person;
+    }
+    private Person person( int id, String name, Integer organizationId, Integer managerId) { 
+        Person person = person(id, name, organizationId); 
+        person.setManagerPersonId(managerId); 
+        return person; 
     }
 }

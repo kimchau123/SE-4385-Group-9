@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import com.group9.skillshub.security.SecurityConfig;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
 
@@ -24,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProjectsController.class)
-@Import(ApiExceptionHandler.class)
+@Import({ApiExceptionHandler.class, SecurityConfig.class})
+@WithMockUser(roles = "ADMIN")
 class ProjectsControllerTest {
 
     @Autowired

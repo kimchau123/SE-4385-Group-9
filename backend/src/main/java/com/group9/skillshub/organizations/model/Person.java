@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 @Table(name = "person")
@@ -24,6 +26,10 @@ public class Person {
 
     @Column(nullable = false)
     private boolean isAdmin;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private Role role = Role.EMPLOYEE;
 
     public int getPersonId() {
         return personId;
@@ -63,5 +69,13 @@ public class Person {
 
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public Role getRole() {
+        return role != null ? role : Role.EMPLOYEE;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

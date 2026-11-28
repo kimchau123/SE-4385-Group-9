@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface SkillProficiencyLevelRepository extends JpaRepository<SkillProficiencyLevel, Integer> {
 
     Optional<SkillProficiencyLevel> findBySkillProficiencyLevelName(String name);
+
+    // Duplicate check when renaming a level
+    boolean existsBySkillProficiencyLevelNameIgnoreCaseAndSkillProficiencyLevelIdNot(String name, int id);
 }

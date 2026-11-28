@@ -8,6 +8,9 @@ import com.group9.skillshub.projects.model.RecordStatus;
 import com.group9.skillshub.projects.repository.PersonProjectAssignmentRepository;
 import com.group9.skillshub.projects.repository.ProjectRepository;
 import com.group9.skillshub.projects.repository.ProjectSkillRequiredRepository;
+import com.group9.skillshub.organizations.repository.OrganizationRepository;
+import com.group9.skillshub.skills.repository.SkillProficiencyLevelRepository;
+import com.group9.skillshub.skills.repository.SkillRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +22,30 @@ public class ProjectsServiceImpl implements ProjectsService {
     private final ProjectRepository projectRepository;
     private final ProjectSkillRequiredRepository projectSkillRequiredRepository;
     private final PersonProjectAssignmentRepository assignmentRepository;
+    private final OrganizationRepository organizationRepository;
+    private final SkillRepository skillRepository;
+    private final SkillProficiencyLevelRepository levelRepository;
 
     public ProjectsServiceImpl(
             ProjectRepository projectRepository,
             ProjectSkillRequiredRepository projectSkillRequiredRepository,
-            PersonProjectAssignmentRepository assignmentRepository) {
+            PersonProjectAssignmentRepository assignmentRepository,
+            OrganizationRepository organizationRepository,
+            SkillRepository skillRepository,
+            SkillProficiencyLevelRepository levelRepository) {
         this.projectRepository = projectRepository;
         this.projectSkillRequiredRepository = projectSkillRequiredRepository;
         this.assignmentRepository = assignmentRepository;
+        this.organizationRepository = organizationRepository;
+        this.skillRepository = skillRepository;
+        this.levelRepository = levelRepository;
     }
 
     @Override
     @Transactional
     public Project addProject(Project project) {
         validateProject(project);
+        verifyOrganizationExists(project.getProjectOwningOrganizationId());
         project.setStatus(RecordStatus.APPROVED);
         return projectRepository.save(project);
     }
@@ -43,6 +56,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         Project existing = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project " + id + " was not found"));
         validateProject(project);
+        verifyOrganizationExists(project.getProjectOwningOrganizationId());
         existing.setProjectName(project.getProjectName());
         existing.setProjectOwningOrganizationId(project.getProjectOwningOrganizationId());
         existing.setProjectStartDate(project.getProjectStartDate());
@@ -82,6 +96,12 @@ public class ProjectsServiceImpl implements ProjectsService {
         if (skillId <= 0 || levelId <= 0) {
             throw new IllegalArgumentException("skillId and levelId must be positive");
         }
+        if (!skillRepository.existsById(skillId)) {
+            throw new ResourceNotFoundException("Skill " + skillId + " was not found");
+        }
+        if (!levelRepository.existsById(levelId)) {
+            throw new ResourceNotFoundException("Proficiency level " + levelId + " was not found");
+        }
         ProjectSkillRequired requiredSkill =
                 new ProjectSkillRequired(projectId, skillId, levelId, RecordStatus.APPROVED);
         return projectSkillRequiredRepository.save(requiredSkill);
@@ -120,6 +140,16 @@ public class ProjectsServiceImpl implements ProjectsService {
     private void verifyProjectExists(int projectId) {
         if (!projectRepository.existsById(projectId)) {
             throw new ResourceNotFoundException("Project " + projectId + " was not found");
+        }
+    }
+
+    private void verifyOrganizationExists(int organizationId) {
+        if (organizationId <= 0) {
+            throw new IllegalArgumentException("projectOwningOrganizationId must be positive");
+        }
+        if (!organizationRepository.existsById(organizationId)) {
+            throw new ResourceNotFoundException(
+                    "Organization " + organizationId + " was not found");
         }
     }
 

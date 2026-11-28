@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { getInventorySummary, type InventorySummary } from '../api/home'
 import { getReportFilterOptions, getReportsData, type ReportFilterOptions, type ReportsData } from '../api/reports'
 import { MiniMetric, PageIntro, StatCard } from '../components/ui'
+import { useAuth } from '../auth/useAuth'
 
 export function ReportsPage() {
+  const {isAdmin} = useAuth()
   const [summary, setSummary] = useState<InventorySummary | null>(null)
   const [reports, setReports] = useState<ReportsData | null>(null)
   const [filterOptions, setFilterOptions] = useState<ReportFilterOptions | null>(null)
@@ -58,7 +60,7 @@ export function ReportsPage() {
 
   return <>
     <PageIntro title="Data Reports" description="Read-only analytics for organizational leaders. This dashboard summarizes approved assignments, department coverage, and illustrative historical proficiency trends.">
-      <span className="report-role">Role: Organizational Leader</span><span className="report-role">Reporting period: {summary.periodLabel}</span>
+      <span className="report-role"> Access: {isAdmin ? 'Administrator' : 'Employee'} </span><span className="report-role">Reporting period: {summary.periodLabel}</span>
     </PageIntro>
     <div className="report-filters">{filters.map((options, index) => <select key={options[0]} aria-label={`Report filter ${index + 1}`} defaultValue={options[0]}>{options.map((option) => <option key={option}>{option}</option>)}</select>)}</div>
     <div className="stats-grid report-stats">

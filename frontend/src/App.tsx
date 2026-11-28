@@ -8,8 +8,30 @@ import { InventoryPage } from './pages/InventoryPage'
 import { OrganizationPage } from './pages/OrganizationPage'
 import { ReportsPage } from './pages/ReportsPage'
 import './App.css'
+import { useAuth } from './auth/useAuth' 
+import { LoginPage } from './pages/LoginPage'
 
 function App() {
+  const { isAuthenticated } = useAuth()
+
+  if (!isAuthenticated) {
+    return <LoginPage />
+  }
+
+  return <Workspace />
+}
+
+function Workspace() {
+  const { user, isAdmin, logout } = useAuth()
+
+  const initials = user?.personName
+    .trim()
+    .split(/\s+/)
+    .map(name => name[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase() || 'U'
+
   const [page, setPage] = useState<Page>('Home')
   const [skills, setSkills] = useState(initialSkills)
   const [query, setQuery] = useState('')
@@ -74,16 +96,18 @@ function App() {
           ))}
         </nav>
         <div className="workspace-profile">
-          <div className="avatar avatar-dark">S</div>
-          <span><strong>Sabre workspace</strong><small>Administrator</small></span>
+          <div className="avatar avatar-dark">{initials}</div>
+          <span>
+            <strong>{user?.personName}</strong>
+            <small>{isAdmin ? 'Administrator' : 'Employee'}</small>
+          </span>
         </div>
       </aside>
 
       <main className="main-shell">
         <header className="topbar">
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-chevron">›</span><strong>{page === 'Add Skill' ? 'Skills Catalog　›　Add Skill' : page}</strong></div>
-          <div className="topbar-actions"><button type="button" className="icon-button" aria-label="Notifications"><Icon name="bell" /></button><button type="button" className="profile-button"><span className="avatar">JD</span><span className="profile-caret">⌄</span></button></div>
-        </header>
+          <div className="topbar-actions"> <button type="button" className="icon-button" aria-label="Notifications" > <Icon name="bell" /> </button> <div className="profile-button"> <span className="avatar">{initials}</span> </div> <button type="button" className="logout-button" onClick={logout} > Sign out </button> </div>        </header>
 
         <div className="page-content">
           {page === 'Home' && <HomePage navigate={navigate} />}

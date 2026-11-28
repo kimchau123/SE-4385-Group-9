@@ -1,3 +1,5 @@
+import { apiFetch } from './client'
+
 export type PersonSkill = {
     personId: number
     skillId: number
@@ -10,7 +12,7 @@ const BASE_URL = '/api/inventory'
 export async function getPersonSkills(
     personId: number
 ): Promise<PersonSkill[]> {
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/persons/${personId}`
     )
 

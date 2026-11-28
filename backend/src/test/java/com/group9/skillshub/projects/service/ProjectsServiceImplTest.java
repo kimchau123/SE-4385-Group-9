@@ -7,6 +7,9 @@ import com.group9.skillshub.projects.model.RecordStatus;
 import com.group9.skillshub.projects.repository.PersonProjectAssignmentRepository;
 import com.group9.skillshub.projects.repository.ProjectRepository;
 import com.group9.skillshub.projects.repository.ProjectSkillRequiredRepository;
+import com.group9.skillshub.organizations.repository.OrganizationRepository;
+import com.group9.skillshub.skills.repository.SkillProficiencyLevelRepository;
+import com.group9.skillshub.skills.repository.SkillRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,16 +38,28 @@ class ProjectsServiceImplTest {
     @Mock
     private PersonProjectAssignmentRepository assignmentRepository;
 
+    @Mock
+    private OrganizationRepository organizationRepository;
+
+    @Mock
+    private SkillRepository skillRepository;
+
+    @Mock
+    private SkillProficiencyLevelRepository levelRepository;
+
     private ProjectsServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new ProjectsServiceImpl(projectRepository, requiredSkillRepository, assignmentRepository);
+        service = new ProjectsServiceImpl(
+                projectRepository, requiredSkillRepository, assignmentRepository,
+                organizationRepository, skillRepository, levelRepository);
     }
 
     @Test
     void addProjectApprovesAndPersistsValidProject() {
         Project project = validProject();
+        when(organizationRepository.existsById(2)).thenReturn(true);
         when(projectRepository.save(project)).thenReturn(project);
 
         Project saved = service.addProject(project);
@@ -64,6 +79,8 @@ class ProjectsServiceImplTest {
     @Test
     void addRequiredSkillRequiresExistingProjectAndApprovesRecord() {
         when(projectRepository.existsById(7)).thenReturn(true);
+        when(skillRepository.existsById(12)).thenReturn(true);
+        when(levelRepository.existsById(3)).thenReturn(true);
         ArgumentCaptor<ProjectSkillRequired> captor = ArgumentCaptor.forClass(ProjectSkillRequired.class);
 
         service.addRequiredSkill(7, 12, 3);
@@ -81,6 +98,25 @@ class ProjectsServiceImplTest {
         when(projectRepository.existsById(404)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.addRequiredSkill(404, 12, 3));
+    }
+
+    @Test
+    void addRequiredSkillRejectsMissingSkillAndLevel() {
+        when(projectRepository.existsById(7)).thenReturn(true);
+        when(skillRepository.existsById(404)).thenReturn(false);
+        assertThrows(ResourceNotFoundException.class, () -> service.addRequiredSkill(7, 404, 3));
+
+        when(skillRepository.existsById(12)).thenReturn(true);
+        when(levelRepository.existsById(404)).thenReturn(false);
+        assertThrows(ResourceNotFoundException.class, () -> service.addRequiredSkill(7, 12, 404));
+    }
+
+    @Test
+    void addProjectRejectsMissingOrganization() {
+        Project project = validProject();
+        when(organizationRepository.existsById(2)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.addProject(project));
     }
 
     @Test

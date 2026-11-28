@@ -72,8 +72,11 @@ Configure their paths with `PG_DUMP_EXECUTABLE` and `PG_RESTORE_EXECUTABLE`; con
 the private archive directory with `DATAOPS_BACKUP_DIRECTORY` (default `./backups`).
 Backups are tracked in the database and verified using SHA-256 before restore.
 
-The data-operations service is implemented, but its HTTP controller is intentionally
-not enabled yet: this application has no authentication provider, while CSV import,
-report export, and especially database restore must be restricted to administrators.
-Do not expose these operations until the team authentication layer enforces admin
-authorization.
+Data operations are exposed at `/api/dataops` and require `ROLE_ADMIN`:
+
+- `POST /api/dataops/validate` — validate an uploaded CSV.
+- `POST /api/dataops/import` — import valid skills with `REQUESTED` status.
+- `GET /api/dataops/imports/{importId}` — retrieve import history.
+- `GET /api/dataops/report?orgId={id}` — download an organization inventory CSV.
+- `POST /api/dataops/backups` — create a PostgreSQL backup.
+- `POST /api/dataops/backups/{backupId}/restore` — restore a verified backup.

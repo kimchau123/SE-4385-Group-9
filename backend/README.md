@@ -13,6 +13,17 @@ mvn spring-boot:run
 mvn test
 ```
 
+## Skills catalog endpoints
+
+- `GET /api/skills` — list skills. Optional filters, in any combination: `query` (full or partial name, case-insensitive), `type` (`KNOWLEDGE`, `EXPERIENCE`, `TECHNOLOGY`, `OTHER`), `status` (`REQUESTED`, `APPROVED`, `CANCELED`). An unknown `type` or `status` returns 400.
+- `GET /api/skills/{id}` — one skill.
+- `POST /api/skills` — add a skill (`skillName` 1–50 characters, optional `skillDescription` 10–500 characters, `skillType`). New skills are always `REQUESTED`; a name that already exists (ignoring case) returns 409.
+- `PUT /api/skills/{id}` — change a skill's name, description and type. Its status is unchanged.
+- `DELETE /api/skills/{id}` — delete a skill. Returns 409 if any person has the skill or any project requires it; deny it instead.
+- `PUT /api/skills/{id}/approve` and `PUT /api/skills/{id}/deny` — admin only. Moves a `REQUESTED` skill to `APPROVED` or `CANCELED`; any other status returns 409.
+- `GET /api/skills/proficiency-levels` — the five proficiency levels, in order (1 = Beginner … 5 = Expert).
+- `PUT /api/skills/proficiency-levels/{id}` — rename a level (`skillProficiencyLevelName`); its id stays the same. Levels can't be added, because Inventory and Projects use the fixed 1–5 scale.
+
 ## Skills inventory endpoints
 
 - `GET /api/inventory/persons/{personId}` — list a person's skills.

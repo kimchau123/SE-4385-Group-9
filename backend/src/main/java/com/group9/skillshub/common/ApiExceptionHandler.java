@@ -7,6 +7,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -24,6 +25,15 @@ public class ApiExceptionHandler {
     public ResponseEntity<ApiError> handleConflict(
             ResourceConflictException exception, HttpServletRequest request) {
         return buildError(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
+    // Returns 400 Bad Request when a value in the URL can't be converted to the expected type
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
+        String message = "Invalid value '" + exception.getValue()
+                + "' for parameter '" + exception.getName() + "'";
+        return buildError(HttpStatus.BAD_REQUEST, message, request);
     }
 
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class,

@@ -25,7 +25,7 @@ public class Person {
     private Integer memberOfOrganizationId;
 
     @Column(nullable = false)
-    private int isAdmin;
+    private boolean isAdmin;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
@@ -64,10 +64,10 @@ public class Person {
     }
 
     public boolean isAdmin() {
-        return isAdmin != 0;
+        return isAdmin;
     }
 
-    public void setIsAdmin(int isAdmin) {
+    public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 

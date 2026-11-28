@@ -58,7 +58,7 @@ class SkillsCatalogApiIntegrationTest {
     private int savePerson(String name, int isAdmin, Role role) {
         Person person = new Person();
         person.setPersonName(name);
-        person.setIsAdmin(isAdmin);
+        person.setIsAdmin(isAdmin == 1);
         person.setRole(role);
         return personRepository.save(person).getPersonId();
     }
